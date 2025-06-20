@@ -1,16 +1,22 @@
 // helpers/downloadFile.js
-const fs = require('fs');
-const path = require('path');
-const axios = require('axios');
-const { v4: uuidv4 } = require('uuid');
+import fs from 'fs';
+import path from 'path';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-async function downloadFile(url, extension = '.jpg') {
+// ES module __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export default async function downloadFile(url, extension = '.bin') {
   const filename = `${uuidv4()}${extension}`;
   const dir = path.join(__dirname, '..', 'downloads');
   const filepath = path.join(dir, filename);
 
   if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(dir, { recursive: true });
   }
 
   const response = await axios({
@@ -29,5 +35,3 @@ async function downloadFile(url, extension = '.jpg') {
 
   return filepath;
 }
-
-module.exports = downloadFile;

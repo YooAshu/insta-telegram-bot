@@ -4,7 +4,8 @@ import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
 import axios from 'axios';
 import sendDownloadedMedia from './helpers/sendDownloadedMedia.js';
-
+// const snapsave = require('metadownloader');
+import snapsave from 'metadownloader';
 dotenv.config();
 
 const app = express();
@@ -59,9 +60,13 @@ async function handleMessage(msg) {
     await bot.sendMessage(chatId, '⏳ Media is loading, please wait...');
 
     try {
-        const apiURL = `${process.env.API}/igdl?url=${encodeURIComponent(input)}`;
-        const res = await axios.get(apiURL);
-        const mediaList = res.data?.url?.data;
+        // const apiURL = `${process.env.API}/igdl?url=${encodeURIComponent(input)}`;
+        // const res = await axios.get(apiURL);
+        // const mediaList = res.data?.url?.data;
+
+        const result = await snapsave(encodeURIComponent(input));
+        // console.log(result);
+        const mediaList = result?.data || [];
 
         if (!Array.isArray(mediaList) || mediaList.length === 0) {
             return bot.sendMessage(chatId, '⚠️ No downloadable media found.');
@@ -117,3 +122,6 @@ process.on('SIGINT', () => {
     console.log('SIGINT received, shutting down gracefully');
     process.exit(0);
 });
+
+
+// console.log(metadownloader);
